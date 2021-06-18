@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
+from typing import Iterable
+import rospy
 import numpy as np
 from math import atan2, pi, sqrt, acos
 import plotly.offline as py
 import plotly.graph_objs as go
 from geometry_msgs.msg import Point
-from tf.transformations import euler_from_quaternion, quaternion_from_euler
-import rospy
 from homework.srv import CheckTarget, CheckTargetRequest, CheckTargetResponse
 
 # Link lengths
@@ -15,12 +15,7 @@ a1 = 0.3
 a2 = 0.3
 d4 = -0.5
 
-# Angles
-theta1 = 0
-theta2 = 0
-theta3 = 0
-theta4 = 0
-
+"""
 # DH parameter table
 DH_table = [
     [0, a1, d1, theta1],
@@ -36,17 +31,15 @@ H0_e = [
     [0, 0, -1, d1 + theta3 + d4],
     [0, 0, 0, 1]
 ]
+"""
 
-
-def fk(configuration):
-    theta1, theta2, theta3, theta4 = configuration
+def fk(configuration: Iterable):
+    q1, q2, q3, q4 = configuration
     return (
-        a1*np.cos(theta1)+a2*np.cos(theta1+theta2),
-        a1*np.sin(theta1)+a2*np.sin(theta1+theta2),
-        d1 + theta3 + d4,
-        theta1 + theta2 + theta4,
-        0,
-        0
+        a1*np.cos(q1)+a2*np.cos(q1+q2),
+        a1*np.sin(q1)+a2*np.sin(q1+q2),
+        d1 + q3 + d4,
+        q1+q2+q4
     )
 
 def ik(target: Point, rotation: float):
