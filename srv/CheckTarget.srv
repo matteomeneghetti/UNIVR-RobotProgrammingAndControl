@@ -1,3 +1,4 @@
 geometry_msgs/Point target
+float32 rotation
 ---
 bool feasible

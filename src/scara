@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
-from math import pi
+from math import atan2, pi, sqrt, acos
 import plotly.offline as py
 import plotly.graph_objs as go
 from geometry_msgs.msg import Point
@@ -49,30 +49,33 @@ def fk(configuration):
         0
     )
 
-def ik(point: Point):
+def ik(target: Point, rotation: float):
 
-    x = point.x
-    y = point.y
-    z = point.z
-
-    q3 = d1 + d4 - z
-    if not (-0.45 <= q3 <= 0.0):
-        return False
-    
     try:
+        gamma = atan2(target.y, target.x)
+        d = sqrt(target.x**2 + target.y**2)
+
+        if (d == 0) or (a1+a2 < d < abs(a1-a2)):
+            return False
+
+        beta = acos((a1**2 + d**2 - a2**2) / (2*a1*d))
+
+        q1 = gamma + beta
+
+        delta = acos((a1**2 + a2**2 - d**2) / (2*a1*a2))
+        q2 = -pi+delta
+
+        q3 = d1 + d4 - target.z
+
+        q4 = rotation - q1 - q2
     
-        q2 = np.arccos((x**2 + y**2 -a1**2 + a2**2) / (2*a1*a2))
-        q2_1 = q2
-        #q2_2 = -q2
-        q1 = np.arctan(y/x) - np.arctan(a2*np.sin(q2_1) / a1 + a2*np.cos(q2_1))
-        #q1_2 = np.arctan(y/x) - np.arctan(a2*np.sin(q2_2) / a1 + a2*np.cos(q2_2))
     except:
         return False
 
-    if not (-2 <= q2 <= 2) or not (-2.5 <= q1 <= 2.55):
+    if not ((-2.5 < q1 < 2.5) or (-2.0 < q2 < 2.0) or (-0.45 < q3 < 0.0) or (-3.0 < q4 < 3.0)):
         return False
 
-    return True
+    return (q1, q2, q3, q4)
 
 def plot() -> None:
 
@@ -86,7 +89,7 @@ def plot() -> None:
 
     data = []
     for i, value in enumerate(j3_space):
-        if i%12 != 0:
+        if i%24 != 0:
             continue
         z = y*0+value
         data.append(go.Surface(z=z, x=x, y=y, colorscale='Blues', showscale=False, opacity=0.7))
@@ -97,8 +100,8 @@ def plot() -> None:
     py.plot(fig)
 
 def callback(request: CheckTargetRequest) -> CheckTargetResponse : 
-
-    return CheckTargetResponse(ik(request.target))
+    result = ik(request.target, request.rotation)
+    return CheckTargetResponse(bool(result))
 
 if __name__ == "__main__":
 
@@ -106,7 +109,6 @@ if __name__ == "__main__":
         rospy.init_node("homework_services_node", anonymous=True)
         rospy.loginfo("Starting services...")
         check_service = rospy.Service("/homework/check", CheckTarget, callback)
-        plot()
         rospy.loginfo("Services started, spinning...")
         rospy.spin()
 
