@@ -65,7 +65,7 @@ def ik(target: Point, rotation: float):
     except:
         return False
 
-    if not ((-2.5 < q1 < 2.5) or (-2.0 < q2 < 2.0) or (-0.45 < q3 < 0.0) or (-3.0 < q4 < 3.0)):
+    if not ((-2.5 < q1 < 2.5) and (-2.0 < q2 < 2.0) and (-0.45 < q3 < 0.0) and (-3.0 < q4 < 3.0)):
         return False
 
     return (q1, q2, q3, q4)
