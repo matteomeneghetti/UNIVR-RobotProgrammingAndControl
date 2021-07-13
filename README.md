@@ -65,3 +65,18 @@ roslaunch homework b2.launch
    <img src="imgs/collision2.png" />
   </p>
 
+
+- MoveIt demo using an UR5 robot, generate the following trajectories:
+  - In operational space
+  - In joint space
+  - With constraints (keep EE orientation)
+  - Alongside multiple waypoints
+  - Parallel to the XY world plane and with Z coordinates 0.3
+  - Avoiding the collision
+  - Adding an object to the EE (sort of) and showing that it generates another trajectory
+
+  https://user-images.githubusercontent.com/25968923/125455907-b72af8be-e6d3-4096-9942-0f9852f439da.mp4
+
+
+
+
