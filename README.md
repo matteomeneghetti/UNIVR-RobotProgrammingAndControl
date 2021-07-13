@@ -1,5 +1,11 @@
 # Homework RPC Module B
 
+Homeworks for module B of Robot Programming and Control 2020/21, done by:
+- **Matteo Meneghetti** *VR469054*
+- **Filippo Grotto** *VR460638*
+
+---
+
 Package containing both homeworks, grouped in two main launch files:
 ```
 # Scara URDF + IK feasibility service
